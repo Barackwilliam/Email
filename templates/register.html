@@ -23,19 +23,25 @@
                 <!-- Username Field -->
                 <div class="form-group mb-3">
                     <label for="id_username" class="form-label">Your Username</label>
-                    {{ form.username }}
+                    <!-- {{ form.username }} -->
+                    <input type="text" name="username" placeholder="Username" required>
+
                 </div>
 
                 <!-- Password Field -->
                 <div class="form-group mb-3">
                     <label for="id_password" class="form-label">Your Password</label>
-                    {{ form.password1 }}
+                    <!-- {{ form.password1 }} -->
+                    <input type="password" name="password1" placeholder="Password" required>
+
                 </div>
 
                 <!-- Confirm Password Field -->
                 <div class="form-group mb-3">
                     <label for="id_password2" class="form-label">Confirm Password</label>
-                    {{ form.password2 }}
+                    <!-- {{ form.password2 }} -->
+                    <input type="password" name="password2" placeholder="Password" required>
+
                 </div>
 
                 <!-- Submit Button -->
