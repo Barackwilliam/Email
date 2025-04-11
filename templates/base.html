@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlickFlier Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+
+
+  <script>
+    // Show the popup after 5 seconds
+    window.onload = function () {
+      setTimeout(function () {
+        const popup = document.getElementById('popup');
+        popup.style.display = 'flex'; // Show the popup
+      }, 5000); // 5000ms = 5 seconds
+
+      // Close the popup when the close button is clicked
+      document.getElementById('closePopup').onclick = function () {
+        const popup = document.getElementById('popup');
+        popup.style.display = 'none'; // Hide the popup
+      };
+    };
+  </script>
+  <style>
+
+     /* Popup container */
+     #popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+      display: none; /* Hidden by default */
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    /* Popup content */
+    #popupContent {
+      background: red; /* Red background */
+      padding: 10px;  /* Reduced padding to make the popup even smaller */
+      border-radius: 8px;  /* Smaller border radius */
+      text-align: center;
+      color: #fff; /* White text */
+      max-width: 200px;  /* Smaller max-width */
+      width: 80%;  /* Ensure it takes up most of the viewport */
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Smaller shadow */
+      animation: fadeIn 0.6s ease-in-out; /* Animation */
+    }
+
+    /* Heading style */
+    #popupContent h2 {
+      font-size: 18px;  /* Smaller font size for heading */
+      margin-bottom: 8px;  /* Reduced space below the heading */
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* Paragraph style */
+    #popupContent p {
+      font-size: 12px;  /* Smaller font size for paragraph */
+      margin-bottom: 10px;  /* Reduced space below paragraph */
+    }
+
+    /* Close button style */
+    #closePopup {
+      background: #ff6b6b; /* Soft red color */
+      color: #fff;
+      border: none;
+      padding: 8px 16px;  /* Smaller padding for the button */
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;  /* Smaller button text */
+      transition: all 0.3s ease;
+    }
+
+    #closePopup:hover {
+      background: #ff3b3b; /* Darker red on hover */
+    }
+
+    /* Animation for popup */
+    @keyframes fadeIn {
+      from {
+        transform: scale(0.6);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    body {
+      background: radial-gradient(ellipse at top, #d8d8e9, #111111);
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      color: #c4f0ff;
+      display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+    }
+    .main-content {
+  flex: 1;
+}
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 240px;
+      background-color: #0a0a23;
+      color: #fff;
+      padding-top: 20px;
+      box-shadow: 2px 0 12px rgba(0, 255, 255, 0.2);
+      display: none;
+    }
+
+    .sidebar h2 {
+      font-size: 22px;
+      text-align: center;
+      color: #00ffc3;
+      margin-bottom: 30px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .sidebar ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .sidebar ul li a {
+      display: block;
+      padding: 12px 24px;
+      color: #d9ff00;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.3s ease;
+    }
+
+    .sidebar ul li a:hover {
+      background-color: #00ffc3;
+      color: #000;
+      border-radius: 8px;
+    }
+
+    .btn-logout {
+      background-color: #00ffc3;
+      color: black;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: block;
+      text-align: center;
+      padding: 10px;
+      margin-left: 24px;
+      margin-right: 24px;
+    }
+
+    .main-content {
+      padding: 30px;
+    }
+
+    @media (min-width: 992px) {
+      .sidebar {
+        display: block;
+      }
+
+      .main-content {
+        margin-left: 240px;
+      }
+
+      .mobile-navbar {
+        display: none;
+      }
+    }
+
+    @media (max-width: 991px) {
+      .main-content {
+        margin-left: 0;
+      }
+    }
+
+    /* Footer */
+    footer {
+      background-color: #3b1e66;
+      color: #00ffc3;
+      text-align: center;
+      padding: 20px 10px;
+      border-top: 1px solid #00ffc377;
+      margin-top: 40px;
+      font-size: 14px;
+      margin-top: auto;
+    }
+
+    footer a {
+      color: #00ffc3;
+      text-decoration: underline;
+    }
+
+    footer a:hover {
+      text-decoration: none;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar for mobile -->
+  <nav class="navbar navbar-dark bg-dark mobile-navbar">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="#">FlickFlier</a>
+    </div>
+  </nav>
+
+  <!-- Sidebar for large screens -->
+  <div class="sidebar d-none d-lg-block">
+    <h2>FlickFlier</h2>
+    <ul>
+      {% if request.user.is_authenticated %}
+        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li><a href="{% url 'add_email' %}">Add Email</a></li>
+        <li><a href="{% url 'all_emails' %}">My Emails</a></li>
+        <li><a href="{% url 'compose_message' %}">Compose</a></li>
+        <li><a class="btn-logout" href="{% url 'logout' %}">Logout</a></li>
+      {% else %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+      {% endif %}
+    </ul>
+  </div>
+
+  <!-- Offcanvas Sidebar for mobile -->
+  <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileSidebar">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">Menu</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <ul class="navbar-nav">
+        {% if request.user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link text-white" href="{% url 'dashboard' %}">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="{% url 'add_email' %}">Add Email</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="{% url 'all_emails' %}">My Emails</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="{% url 'compose_message' %}">Compose</a></li>
+          <li class="nav-item"><a class="nav-link text-danger" href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link text-white" href="{% url 'login' %}">Login</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="main-content">
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    &copy; {{ year }} FlickFlier. All rights reserved.
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

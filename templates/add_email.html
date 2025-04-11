@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Email{% endblock %}
+
+{% block content %}
+<h2>Add New Email</h2>
+<form method="POST" class="card p-4 shadow-lg rounded">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Add Email</button>
+</form>
+{% endblock %}

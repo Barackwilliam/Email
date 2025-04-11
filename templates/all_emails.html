@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}All Emails{% endblock %}
+
+{% block content %}
+<h2> Emails Added by Me</h2>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Region</th>
+                <th>District</th>
+                <th>School Name</th>
+                <th>Phone Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for email in user_emails %}
+            <tr>
+                <td>{{ email.user.username }}</td>
+                <td>{{ email.email }}</td>
+                <td>{{ email.region }}</td>
+                <td>{{ email.district }}</td>
+                <td>{{ email.school_name }}</td>
+                <td>{{ email.phone_number }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
