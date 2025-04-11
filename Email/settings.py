@@ -23,14 +23,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-u9@!=6!5h#*c6h6+mazo*d%hm_im5s*=_g_)8mz_w$0%%_llu@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'Email_app',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -70,9 +71,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Email.wsgi.application'
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # Add this line if you have a 'static' directory in your project
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -152,3 +157,29 @@ EMAIL_HOST_PASSWORD = "Flick@#*0703"
 DEFAULT_FROM_EMAIL = 'flick@flickflier.com'
 
 LOGIN_URL = 'login'
+
+
+
+# settings.py
+
+JAZZMIN_SETTINGS = {
+    "site_title": "My Admin Panel",
+    "site_header": "My Dashboard",
+    "site_brand": "FlickFlier", 
+    "welcome_sign": "Welcome to FlickFlier Dashboard", 
+    "copyright": "FlickFlier © 2025", 
+    "search_model": "auth.User",
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"model": "auth.User"},
+        {"app": "Email System"},
+    ],
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "darkly",
+    "navbar_fixed": True,
+    "sidebar_fixed": True,
+    "footer_fixed": False,
+    "show_ui_builder": True,
+}

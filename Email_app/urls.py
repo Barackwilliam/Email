@@ -12,6 +12,8 @@ urlpatterns = [
     path('add_email/', views.add_email, name='add_email'),
     path('compose/', views.send_custom_message, name='send_custom_message'),
     path('compose/', views.send_custom_message, name='compose_message'),
+    path('all-emails-by-user/', views.all_emails_by_user, name='all_emails_by_user'),
+
 
 
 ]

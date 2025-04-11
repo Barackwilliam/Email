@@ -94,6 +94,12 @@ def send_to_all_emails(request):
     return redirect('dashboard')
 
 
+
+
+
+
+from django.contrib import messages  # Hakikisha imewekwa juu
+
 @login_required
 def send_custom_message(request):
     if request.method == 'POST':
@@ -106,6 +112,8 @@ def send_custom_message(request):
         else:
             emails = EmailEntry.objects.all()
 
+        sent_count = 0  # counter ya emails zilizotumwa
+
         for email in emails:
             message = render_to_string('email_template.html', {
                 'email': email,
@@ -113,9 +121,86 @@ def send_custom_message(request):
             })
             plain_message = strip_tags(message)
             send_mail('Custom Message', plain_message, settings.DEFAULT_FROM_EMAIL, [email.email], html_message=message)
+            sent_count += 1
 
+        messages.success(request, f'Message sent to {sent_count} email{"s" if sent_count != 1 else ""}.')
         return redirect('dashboard')
 
     else:
         user_emails = EmailEntry.objects.filter(user=request.user)
         return render(request, 'compose_message.html', {'user_emails': user_emails})
+
+# @login_required
+# def send_custom_message(request):
+#     if request.method == 'POST':
+#         message_body = request.POST.get('message_body')
+#         send_option = request.POST.get('send_option')
+#         selected_ids = request.POST.get('selected_ids').split(',') if request.POST.get('selected_ids') else []
+
+#         if send_option == 'selected':
+#             emails = EmailEntry.objects.filter(id__in=selected_ids)
+#         else:
+#             emails = EmailEntry.objects.all()
+
+#         for email in emails:
+#             message = render_to_string('email_template.html', {
+#                 'email': email,
+#                 'message_body': message_body
+#             })
+#             plain_message = strip_tags(message)
+#             send_mail('Custom Message', plain_message, settings.DEFAULT_FROM_EMAIL, [email.email], html_message=message)
+
+#         return redirect('dashboard')
+
+#     else:
+#         user_emails = EmailEntry.objects.filter(user=request.user)
+#         return render(request, 'compose_message.html', {'user_emails': user_emails})
+
+
+
+from django.core.paginator import Paginator
+from django.contrib.auth.models import User
+
+# @login_required
+# def all_emails_by_user(request):
+#     users = User.objects.all().prefetch_related('emailentry_set')
+#     paginated_users = []
+
+#     for user in users:
+#         emails = user.emailentry_set.all()
+#         paginator = Paginator(emails, 10)
+
+#         # page key kwa kila user in unique format: page_userID
+#         page_number = request.GET.get(f'page_{user.id}', 1)
+#         page_obj = paginator.get_page(page_number)
+
+#         paginated_users.append({
+#             'user': user,
+#             'page_obj': page_obj
+#         })
+
+#     return render(request, 'all_emails_by_user.html', {'paginated_users': paginated_users})
+
+
+from django.contrib.auth.models import User  # Make sure this is imported
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def all_emails_by_user(request):
+    users = User.objects.all()
+    paginated_users = []
+
+    for user in users:
+        user_emails = EmailEntry.objects.filter(user=user)
+        paginator = Paginator(user_emails, 5)
+        page_number = request.GET.get(f'page_{user.id}')
+        page_obj = paginator.get_page(page_number)
+
+        paginated_users.append({
+            'user': user,
+            'page_obj': page_obj,
+            'email_count': user_emails.count(),  # Count of emails
+        })
+
+    return render(request, 'all_emails_by_user.html', {'paginated_users': paginated_users})
