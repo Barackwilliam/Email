@@ -14,21 +14,19 @@
                 <!-- Username Field -->
                 <div class="form-group mb-3">
                     <label for="id_username" class="form-label">Username</label>
-                    <!-- {{ form.username }} -->
-                      <input type="text" name="username" placeholder="Your Username" required>
+                    <input type="text" id="id_username" name="username" class="form-control" placeholder="Your Username" required>
                 </div>
-
+            
                 <!-- Password Field -->
                 <div class="form-group mb-3">
                     <label for="id_password" class="form-label">Password</label>
-                    <!-- {{ form.password }} -->
-                    <input type="password" name="password" placeholder="Your password" required>
+                    <input type="password" id="id_password" name="password" class="form-control" placeholder="Your password" required>
                 </div>
-
+            
                 <!-- Submit Button -->
                 <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>
-
+            
             <div class="text-center mt-3">
                 <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
             </div>

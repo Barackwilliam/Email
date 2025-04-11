@@ -9,39 +9,35 @@
             <h2 class="text-center mb-4">Create an Account</h2>
 
      <!-- The Popup (Hidden by default) -->
-     <div id="popup">
-        <div id="popupContent">
-            <h2>👋 Important!</h2>
-            <p style="color:white;">Password Should be combination of numbers and Characters and not Less than 8 in lenght</p>
-            <button id="closePopup">OK.!</button>
-        </div>
-    </div>
-  
+<div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; 
+transform: translate(-50%, -50%); z-index: 9999; background-color: rgba(0, 0, 0, 0.9); 
+padding: 30px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center;">
+
+<h2 class="text-white">👋 Important!</h2>
+<p class="text-white">Password should be a combination of numbers and characters, and not less than 8 in length.</p>
+<button id="closePopup" class="btn btn-danger btn-sm mt-2">OK.!</button>
+</div>
+
+
             <form method="POST">
                 {% csrf_token %}
                 
                 <!-- Username Field -->
                 <div class="form-group mb-3">
                     <label for="id_username" class="form-label">Your Username</label>
-                    <!-- {{ form.username }} -->
-                    <input type="text" name="username" placeholder="Username" required>
-
+                    <input type="text" id="id_username" name="username" class="form-control" placeholder="Username" required>
                 </div>
 
                 <!-- Password Field -->
                 <div class="form-group mb-3">
-                    <label for="id_password" class="form-label">Your Password</label>
-                    <!-- {{ form.password1 }} -->
-                    <input type="password" name="password1" placeholder="Password" required>
-
+                    <label for="id_password1" class="form-label">Your Password</label>
+                    <input type="password" id="id_password1" name="password1" class="form-control" placeholder="Password" required>
                 </div>
 
                 <!-- Confirm Password Field -->
                 <div class="form-group mb-3">
                     <label for="id_password2" class="form-label">Confirm Password</label>
-                    <!-- {{ form.password2 }} -->
-                    <input type="password" name="password2" placeholder="Password" required>
-
+                    <input type="password" id="id_password2" name="password2" class="form-control" placeholder="Confirm Password" required>
                 </div>
 
                 <!-- Submit Button -->
@@ -54,4 +50,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    window.onload = function () {
+        const popup = document.getElementById("popup");
+        const closeBtn = document.getElementById("closePopup");
+
+        // Display popup after 7 seconds
+        setTimeout(function () {
+            popup.style.display = "block";
+        }, 7000);
+
+        // Close popup when button clicked
+        closeBtn.onclick = function () {
+            popup.style.display = "none";
+        };
+    };
+</script>
+
 {% endblock %}
