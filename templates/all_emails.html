@@ -3,33 +3,44 @@
 {% block title %}All Emails{% endblock %}
 
 {% block content %}
-<h2> My Emails</h2>
+<div class="container py-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-light text-center">
+            <h3 class="mb-0">📧 My Saved Emails</h3>
+        </div>
 
-<div class="table-responsive">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>User</th>
-                <th>Email</th>
-                <th>Region</th>
-                <th>District</th>
-                <th>School Name</th>
-                <th>Phone Number</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for email in user_emails %}
-            <tr>
-                <td>{{ email.user.username }}</td>
-                <td>{{ email.email }}</td>
-                <td>{{ email.region }}</td>
-                <td>{{ email.district }}</td>
-                <td>{{ email.school_name }}</td>
-                <td>{{ email.phone_number }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-dark text-white">
+                        <tr>
+                            <th style="min-width: 120px;">User</th>
+                            <th style="min-width: 200px; word-break: break-all;">Email</th>
+                            <th style="min-width: 100px;">Region</th>
+                            <th style="min-width: 100px;">District</th>
+                            <th style="min-width: 160px;">School Name</th>
+                            <th style="min-width: 140px; white-space: nowrap;">Phone Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for email in user_emails %}
+                            <tr>
+                                <td>{{ email.user.username }}</td>
+                                <td style="word-break: break-all;">{{ email.email }}</td>
+                                <td>{{ email.region }}</td>
+                                <td>{{ email.district }}</td>
+                                <td>{{ email.school_name }}</td>
+                                <td style="white-space: nowrap;">{{ email.phone_number }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">You have not added any emails yet.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
-
 {% endblock %}

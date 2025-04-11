@@ -2,63 +2,80 @@
 {% block title %}Compose Message{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="mb-4">Compose and Send Message</h2>
-
-    <form method="POST" id="messageForm" action="{% url 'send_custom_message' %}">
-        {% csrf_token %}
-        
-        <div class="mb-3">
-            <label for="message_body" class="form-label">Your Message</label>
-            <textarea class="form-control" id="message_body" name="message_body" rows="6" required></textarea>
+<div class="container py-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white text-center">
+            <h3 class="mb-0">✉️ Compose and Send Message</h3>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Send To:</label>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="send_option" id="send_selected" value="selected" checked>
-                <label class="form-check-label" for="send_selected">
-                    Selected Emails Only
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="send_option" id="send_all" value="all">
-                <label class="form-check-label" for="send_all">
-                    All Emails
-                </label>
-            </div>
+        <div class="card-body">
+            <form method="POST" id="messageForm" action="{% url 'send_custom_message' %}">
+                {% csrf_token %}
+
+                <!-- Message Body -->
+                <div class="mb-4">
+                    <label for="message_body" class="form-label fw-semibold">Your Message</label>
+                    <textarea class="form-control" id="message_body" name="message_body" rows="6" placeholder="Type your message here..." required></textarea>
+                </div>
+
+                <!-- Send Options -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Send To:</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="send_option" id="send_selected" value="selected" checked>
+                        <label class="form-check-label" for="send_selected">
+                            Selected Emails Only
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="send_option" id="send_all" value="all">
+                        <label class="form-check-label" for="send_all">
+                            All Emails
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Hidden input for selected email IDs -->
+                <input type="hidden" name="selected_ids" id="selected_ids" value="">
+
+                <!-- Email Selection Table -->
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Select</th>
+                                <th scope="col" style="min-width: 160px;">School</th>
+                                <th scope="col" style="min-width: 220px; word-break: break-word;">Email</th>
+                                <th scope="col" style="min-width: 130px; white-space: nowrap;">Phone</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for email in user_emails %}
+                            <tr>
+                                <td><input type="checkbox" class="email-checkbox" value="{{ email.id }}"></td>
+                                <td>{{ email.school_name }}</td>
+                                <td style="word-break: break-word;">{{ email.email }}</td>
+                                <td style="white-space: nowrap;">{{ email.phone_number }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">No emails available.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Submit -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-success btn-lg">🚀 Send Message</button>
+                </div>
+            </form>
         </div>
-
-        <!-- Hidden field to send selected IDs -->
-        <input type="hidden" name="selected_ids" id="selected_ids" value="">
-
-        <div class="table-responsive mb-4">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>School</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for email in user_emails %}
-                    <tr>
-                        <td><input type="checkbox" class="email-checkbox" value="{{ email.id }}"></td>
-                        <td>{{ email.school_name }}</td>
-                        <td>{{ email.email }}</td>
-                        <td>{{ email.phone_number }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100">Send Message</button>
-    </form>
+    </div>
 </div>
 
+<!-- JavaScript to capture selected checkboxes -->
 <script>
     document.getElementById("messageForm").addEventListener("submit", function (e) {
         const sendOption = document.querySelector('input[name="send_option"]:checked').value;

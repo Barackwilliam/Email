@@ -1,43 +1,45 @@
+
+
 {% extends 'base.html' %}
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
-        <h2 class="mb-3">Welcome, {{ request.user.username }}</h2>
-        <div>
-            <a href="{% url 'add_email' %}" class="btn btn-outline-primary">+ Add New Email</a>
-        </div>
+<div class="container py-4">
+    <!-- Welcome and Action -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+        <h2 class="mb-3 mb-md-0">👋 Welcome, <strong>{{ request.user.username }}</strong></h2>
+        <a href="{% url 'add_email' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add New Email
+        </a>
     </div>
 
-
-
-
+    <!-- Alerts -->
     {% if messages %}
-    <div class="container mt-3">
         {% for message in messages %}
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endfor %}
-    </div>
-{% endif %}
+    {% endif %}
 
-
+    <!-- Search Bar -->
     <form method="GET" class="mb-4">
         <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Search emails..." value="{{ search_query }}">
-            <button class="btn btn-primary" type="submit">Search</button>
+            <input type="text" name="search" class="form-control" placeholder="🔍 Search emails..." value="{{ search_query }}">
+            <button class="btn btn-dark" type="submit">Search</button>
         </div>
     </form>
 
-    <div class="card shadow-sm mb-4">
-       <div class="text-center"> <h3>List of All Registered Emails</h3></div>
-        <div class="card-body">
+    <!-- Email List Card -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-light text-center">
+            <h4 class="mb-0">📧 List of All Registered Emails</h4>
+        </div>
+        <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark text-white">
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Region</th>
@@ -50,38 +52,43 @@
                     </thead>
                     <tbody>
                         {% for email in page_obj %}
-                        <tr>
-                            <td><input type="checkbox" name="selected_emails" value="{{ email.id }}"></td>
-                            <td>{{ email.region }}</td>
-                            <td>{{ email.district }}</td>
-                            <td>{{ email.school_name }}</td>
-                            <td>{{ email.email }}</td>
-                            <td>{{ email.phone_number }}</td>
-                            <td>{{ email.user.username }}</td>
-
-                        </tr>
+                            <tr>
+                                <td><input type="checkbox" name="selected_emails" value="{{ email.id }}"></td>
+                                <td>{{ email.region }}</td>
+                                <td>{{ email.district }}</td>
+                                <td>{{ email.school_name }}</td>
+                                <td>{{ email.email }}</td>
+                                <td>{{ email.phone_number }}</td>
+                                <td>{{ email.user.username }}</td>
+                            </tr>
                         {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-center">No emails found.</td>
-                        </tr>
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">No emails found.</td>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
+        </div>
 
-            <a href="{% url 'send_custom_message' %}" class="btn btn-outline-secondary">Compose Message</a>
+        <!-- Compose Message Button -->
+        <div class="card-footer bg-white text-end">
+            <a href="{% url 'send_custom_message' %}" class="btn btn-outline-secondary">
+                ✉️ Compose Message
+            </a>
         </div>
     </div>
 
-    <nav aria-label="Page navigation">
+    <!-- Pagination -->
+    <nav aria-label="Page navigation" class="mt-4">
         <ul class="pagination justify-content-center">
             {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page=1&search={{ search_query }}">« First</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}">‹ Prev</a>
-            </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=1&search={{ search_query }}">« First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}">‹ Prev</a>
+                </li>
             {% endif %}
 
             <li class="page-item active">
@@ -91,15 +98,14 @@
             </li>
 
             {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search_query }}">Next ›</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&search={{ search_query }}">Last »</a>
-            </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search_query }}">Next ›</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&search={{ search_query }}">Last »</a>
+                </li>
             {% endif %}
         </ul>
     </nav>
 </div>
-
 {% endblock %}
