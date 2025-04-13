@@ -15,22 +15,24 @@
                     <thead class="table-dark text-white">
                         <tr>
                             <th style="min-width: 120px;">User</th>
-                            <th style="min-width: 200px; word-break: break-all;">Email</th>
                             <th style="min-width: 100px;">Region</th>
                             <th style="min-width: 100px;">District</th>
                             <th style="min-width: 160px;">School Name</th>
                             <th style="min-width: 140px; white-space: nowrap;">Phone Number</th>
+                            <th style="min-width: 200px; word-break: break-all;">Email</th>
+
                         </tr>
                     </thead>
                     <tbody>
                         {% for email in user_emails %}
                             <tr>
                                 <td>{{ email.user.username }}</td>
-                                <td style="word-break: break-all;">{{ email.email }}</td>
                                 <td>{{ email.region }}</td>
                                 <td>{{ email.district }}</td>
                                 <td>{{ email.school_name }}</td>
                                 <td style="white-space: nowrap;">{{ email.phone_number }}</td>
+                                <td style="word-break: break-all;">{{ email.email }}</td>
+
                             </tr>
                         {% empty %}
                             <tr>
