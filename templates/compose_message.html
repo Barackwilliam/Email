@@ -9,6 +9,8 @@
         </div>
 
         <div class="card-body">
+
+            <!-- FORM YA KUTUMA UJUMBE -->
             <form method="POST" id="messageForm" action="{% url 'send_custom_message' %}">
                 {% csrf_token %}
 
@@ -23,54 +25,82 @@
                     <label class="form-label fw-semibold">Send To:</label>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="send_option" id="send_selected" value="selected" checked>
-                        <label class="form-check-label" for="send_selected">
-                            Selected Emails Only
-                        </label>
+                        <label class="form-check-label" for="send_selected">Selected Emails Only</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="send_option" id="send_all" value="all">
-                        <label class="form-check-label" for="send_all">
-                            All Emails
-                        </label>
+                        <label class="form-check-label" for="send_all">All Emails</label>
                     </div>
                 </div>
 
                 <!-- Hidden input for selected email IDs -->
                 <input type="hidden" name="selected_ids" id="selected_ids" value="">
 
-                <!-- Email Selection Table -->
-                <div class="table-responsive mb-4">
-                    <table class="table table-bordered table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th scope="col">Select</th>
-                                <th scope="col" style="min-width: 160px;">School</th>
-                                <th scope="col" style="min-width: 220px; word-break: break-word;">Email</th>
-                                <th scope="col" style="min-width: 130px; white-space: nowrap;">Phone</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for email in user_emails %}
-                            <tr>
-                                <td><input type="checkbox" class="email-checkbox" value="{{ email.id }}"></td>
-                                <td>{{ email.school_name }}</td>
-                                <td style="word-break: break-word;">{{ email.email }}</td>
-                                <td style="white-space: nowrap;">{{ email.phone_number }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4" class="text-center text-muted">No emails available.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Submit -->
-                <div class="d-grid">
+                <!-- Submit Message Button -->
+                <div class="d-grid mb-4">
                     <button type="submit" class="btn btn-success btn-lg">🚀 Send Message</button>
                 </div>
             </form>
+
+            <!-- FORM YA SEARCH -->
+            <form method="GET" class="d-flex mb-4" role="search">
+                <input class="form-control me-2" type="search" name="search" placeholder="Search region, district, school name, email or phone" value="{{ search_query }}">
+                <button class="btn btn-outline-primary" type="submit">🔍 Search</button>
+            </form>
+
+            <!-- Email Selection Table -->
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Select</th>
+                            <th>School</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for email in user_emails %}
+                        <tr>
+                            <td><input type="checkbox" class="email-checkbox" value="{{ email.id }}"></td>
+                            <td>{{ email.school_name }}</td>
+                            <td>{{ email.email }}</td>
+                            <td>{{ email.phone_number }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No emails available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Controls -->
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if user_emails.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?search={{ search_query }}&page=1">« First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?search={{ search_query }}&page={{ user_emails.previous_page_number }}">‹ Prev</a>
+                        </li>
+                    {% endif %}
+
+                    <li class="page-item active"><span class="page-link">{{ user_emails.number }}</span></li>
+
+                    {% if user_emails.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?search={{ search_query }}&page={{ user_emails.next_page_number }}">Next ›</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?search={{ search_query }}&page={{ user_emails.paginator.num_pages }}">Last »</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+
         </div>
     </div>
 </div>

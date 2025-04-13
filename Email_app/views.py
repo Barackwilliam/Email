@@ -15,9 +15,49 @@ from django.db.models import Q
 
 from datetime import datetime
 
+# @login_required
+# def dashboard(request):
+#     # Salamu ya wakati
+#     current_hour = datetime.now().hour
+#     if 5 <= current_hour < 12:
+#         greeting = "Good Morning"
+#     elif 12 <= current_hour < 17:
+#         greeting = "Good Afternoon"
+#     elif 17 <= current_hour < 22:
+#         greeting = "Good Evening"
+#     else:
+#         greeting = "Good Night"
+
+#     search_query = request.GET.get('search', '')
+#     per_page = int(request.GET.get('per_page', 6))  # default ni 6
+
+#     if search_query:
+#         emails = EmailEntry.objects.filter(
+#             Q(email__icontains=search_query) |
+#             Q(region__icontains=search_query) |
+#             Q(district__icontains=search_query) |
+#             Q(school_name__icontains=search_query) |
+#             Q(phone_number__icontains=search_query)
+#         )
+#     else:
+#         emails = EmailEntry.objects.all()
+
+#     total_emails = EmailEntry.objects.count()
+#     filtered_count = emails.count()
+
+#     paginator = Paginator(emails, per_page)
+#     page_number = request.GET.get('page')
+#     page_obj = paginator.get_page(page_number)
+
+#     return render(request, 'dashboard.html', {
+#         'page_obj': page_obj,
+#         'total_emails': total_emails,
+#         'filtered_count': filtered_count,
+#         'greeting': greeting
+#     })
+
 @login_required
 def dashboard(request):
-    # Salamu ya wakati
     current_hour = datetime.now().hour
     if 5 <= current_hour < 12:
         greeting = "Good Morning"
@@ -27,10 +67,9 @@ def dashboard(request):
         greeting = "Good Evening"
     else:
         greeting = "Good Night"
-    # Salamu ya wakati
-    # Search & pagination logic (umeiweka tayari)
+
     search_query = request.GET.get('search', '')
-    total_emails = EmailEntry.objects.count()
+    per_page = int(request.GET.get('per_page', 6))  # default ni 6
 
     if search_query:
         emails = EmailEntry.objects.filter(
@@ -43,19 +82,20 @@ def dashboard(request):
     else:
         emails = EmailEntry.objects.all()
 
-    paginator = Paginator(emails, 6)
+    total_emails = EmailEntry.objects.count()
+    filtered_count = emails.count()
+
+    paginator = Paginator(emails, per_page)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    filtered_count = emails.count()
 
     return render(request, 'dashboard.html', {
         'page_obj': page_obj,
-        'search_query': search_query,
         'total_emails': total_emails,
         'filtered_count': filtered_count,
-        'greeting': greeting
+        'greeting': greeting,
+        'search_query': search_query,  # <-- Hii ndiyo ilikuwa haipo!
     })
-
 
 
 
@@ -216,6 +256,44 @@ def send_to_all_emails(request):
 
 from django.contrib import messages  # Hakikisha imewekwa juu
 
+# @login_required
+# def send_custom_message(request):
+#     if request.method == 'POST':
+#         message_body = request.POST.get('message_body')
+#         send_option = request.POST.get('send_option')
+#         selected_ids = request.POST.get('selected_ids').split(',') if request.POST.get('selected_ids') else []
+
+#         if send_option == 'selected':
+#             emails = EmailEntry.objects.filter(id__in=selected_ids)
+#         else:
+#             emails = EmailEntry.objects.all()
+
+#         sent_count = 0  # counter ya emails zilizotumwa
+
+#         for email in emails:
+#             message = render_to_string('email_template.html', {
+#                 'email': email,
+#                 'message_body': message_body
+#             })
+#             plain_message = strip_tags(message)
+#             send_mail('Custom Message', plain_message, settings.DEFAULT_FROM_EMAIL, [email.email], html_message=message)
+#             sent_count += 1
+
+#         messages.success(request, f'Message sent to {sent_count} email{"s" if sent_count != 1 else ""}.')
+#         return redirect('dashboard')
+
+#     else:
+#         user_emails = EmailEntry.objects.filter(user=request.user)
+#         return render(request, 'compose_message.html', {'user_emails': user_emails})
+
+
+
+
+
+from django.core.paginator import Paginator
+from django.db.models import Q
+from datetime import datetime
+
 @login_required
 def send_custom_message(request):
     if request.method == 'POST':
@@ -228,8 +306,7 @@ def send_custom_message(request):
         else:
             emails = EmailEntry.objects.all()
 
-        sent_count = 0  # counter ya emails zilizotumwa
-
+        sent_count = 0
         for email in emails:
             message = render_to_string('email_template.html', {
                 'email': email,
@@ -243,8 +320,26 @@ def send_custom_message(request):
         return redirect('dashboard')
 
     else:
+        search_query = request.GET.get('search', '')
         user_emails = EmailEntry.objects.filter(user=request.user)
-        return render(request, 'compose_message.html', {'user_emails': user_emails})
+
+        if search_query:
+            user_emails = user_emails.filter(
+                Q(region__icontains=search_query) |
+                Q(district__icontains=search_query) |
+                Q(school_name__icontains=search_query) |
+                Q(email__icontains=search_query) |
+                Q(phone_number__icontains=search_query)
+            )
+
+        paginator = Paginator(user_emails, 3)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        return render(request, 'compose_message.html', {
+            'user_emails': page_obj,
+            'search_query': search_query,
+        })
 
 
 from django.contrib.auth.models import User  # Make sure this is imported
