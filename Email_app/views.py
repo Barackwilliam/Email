@@ -9,31 +9,83 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from .models import EmailEntry
 from .forms import EmailEntryForm
+from django.db.models import Q
 
 # @login_required
 # def dashboard(request):
 #     search_query = request.GET.get('search', '')
-#     emails = EmailEntry.objects.filter(email__icontains=search_query)
+#     total_emails = EmailEntry.objects.count()
+
+#     if search_query:
+#         # Tafuta kwa kutumia fields zote
+#         emails = EmailEntry.objects.filter(
+#             Q(email__icontains=search_query) |
+#             Q(region__icontains=search_query) |
+#             Q(district__icontains=search_query) |
+#             Q(school_name__icontains=search_query) |
+#             Q(phone_number__icontains=search_query)
+#         )
+#     else:
+#         emails = EmailEntry.objects.all()
+
 #     paginator = Paginator(emails, 10)
 #     page_number = request.GET.get('page')
 #     page_obj = paginator.get_page(page_number)
-#     return render(request, 'dashboard.html', {'page_obj': page_obj, 'search_query': search_query})
+#     filtered_count = emails.count()
+
+#     return render(request, 'dashboard.html', {
+#         'page_obj': page_obj,
+#         'search_query': search_query,
+#         'total_emails': total_emails,
+#         'filtered_count': filtered_count,
+#     })
+
+
+
+from datetime import datetime
 
 @login_required
 def dashboard(request):
+    # Salamu ya wakati
+    current_hour = datetime.now().hour
+    if 5 <= current_hour < 12:
+        greeting = "Good Morning"
+    elif 12 <= current_hour < 17:
+        greeting = "Good Afternoon"
+    elif 17 <= current_hour < 22:
+        greeting = "Good Evening"
+    else:
+        greeting = "Hello!"
+
+    # Search & pagination logic (umeiweka tayari)
     search_query = request.GET.get('search', '')
-    emails = EmailEntry.objects.filter(email__icontains=search_query)
+    total_emails = EmailEntry.objects.count()
+
+    if search_query:
+        emails = EmailEntry.objects.filter(
+            Q(email__icontains=search_query) |
+            Q(region__icontains=search_query) |
+            Q(district__icontains=search_query) |
+            Q(school_name__icontains=search_query) |
+            Q(phone_number__icontains=search_query)
+        )
+    else:
+        emails = EmailEntry.objects.all()
+
     paginator = Paginator(emails, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
-    total_emails = emails.count()  # Hii ndiyo jumla ya emails
+    filtered_count = emails.count()
 
     return render(request, 'dashboard.html', {
         'page_obj': page_obj,
         'search_query': search_query,
-        'total_emails': total_emails
+        'total_emails': total_emails,
+        'filtered_count': filtered_count,
+        'greeting': greeting
     })
+
+
 
 
 from django.contrib import messages
