@@ -11,35 +11,6 @@ from .models import EmailEntry
 from .forms import EmailEntryForm
 from django.db.models import Q
 
-# @login_required
-# def dashboard(request):
-#     search_query = request.GET.get('search', '')
-#     total_emails = EmailEntry.objects.count()
-
-#     if search_query:
-#         # Tafuta kwa kutumia fields zote
-#         emails = EmailEntry.objects.filter(
-#             Q(email__icontains=search_query) |
-#             Q(region__icontains=search_query) |
-#             Q(district__icontains=search_query) |
-#             Q(school_name__icontains=search_query) |
-#             Q(phone_number__icontains=search_query)
-#         )
-#     else:
-#         emails = EmailEntry.objects.all()
-
-#     paginator = Paginator(emails, 10)
-#     page_number = request.GET.get('page')
-#     page_obj = paginator.get_page(page_number)
-#     filtered_count = emails.count()
-
-#     return render(request, 'dashboard.html', {
-#         'page_obj': page_obj,
-#         'search_query': search_query,
-#         'total_emails': total_emails,
-#         'filtered_count': filtered_count,
-#     })
-
 
 
 from datetime import datetime
@@ -55,8 +26,8 @@ def dashboard(request):
     elif 17 <= current_hour < 22:
         greeting = "Good Evening"
     else:
-        greeting = "Hello!"
-
+        greeting = "Good Night"
+    # Salamu ya wakati
     # Search & pagination logic (umeiweka tayari)
     search_query = request.GET.get('search', '')
     total_emails = EmailEntry.objects.count()
@@ -72,7 +43,7 @@ def dashboard(request):
     else:
         emails = EmailEntry.objects.all()
 
-    paginator = Paginator(emails, 10)
+    paginator = Paginator(emails, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     filtered_count = emails.count()
@@ -89,7 +60,6 @@ def dashboard(request):
 
 
 from django.contrib import messages
-from .forms import EmailEntryForm
 import random
 
 success_messages = [
@@ -194,13 +164,19 @@ def logout_user(request):
     logout(request)
     return redirect('login')
     
+from django.core.paginator import Paginator
+
 @login_required
 def all_emails(request):
     user_emails = EmailEntry.objects.filter(user=request.user)
-    total_user_emails = user_emails.count()  # Jumla ya emails alizoongeza huyu user
+    total_user_emails = user_emails.count()
+
+    paginator = Paginator(user_emails, 6)  # Emails 6 kwa kila page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     return render(request, 'all_emails.html', {
-        'user_emails': user_emails,
+        'page_obj': page_obj,
         'total_user_emails': total_user_emails
     })
 
@@ -270,61 +246,8 @@ def send_custom_message(request):
         user_emails = EmailEntry.objects.filter(user=request.user)
         return render(request, 'compose_message.html', {'user_emails': user_emails})
 
-# @login_required
-# def send_custom_message(request):
-#     if request.method == 'POST':
-#         message_body = request.POST.get('message_body')
-#         send_option = request.POST.get('send_option')
-#         selected_ids = request.POST.get('selected_ids').split(',') if request.POST.get('selected_ids') else []
-
-#         if send_option == 'selected':
-#             emails = EmailEntry.objects.filter(id__in=selected_ids)
-#         else:
-#             emails = EmailEntry.objects.all()
-
-#         for email in emails:
-#             message = render_to_string('email_template.html', {
-#                 'email': email,
-#                 'message_body': message_body
-#             })
-#             plain_message = strip_tags(message)
-#             send_mail('Custom Message', plain_message, settings.DEFAULT_FROM_EMAIL, [email.email], html_message=message)
-
-#         return redirect('dashboard')
-
-#     else:
-#         user_emails = EmailEntry.objects.filter(user=request.user)
-#         return render(request, 'compose_message.html', {'user_emails': user_emails})
-
-
-
-from django.core.paginator import Paginator
-from django.contrib.auth.models import User
-
-# @login_required
-# def all_emails_by_user(request):
-#     users = User.objects.all().prefetch_related('emailentry_set')
-#     paginated_users = []
-
-#     for user in users:
-#         emails = user.emailentry_set.all()
-#         paginator = Paginator(emails, 10)
-
-#         # page key kwa kila user in unique format: page_userID
-#         page_number = request.GET.get(f'page_{user.id}', 1)
-#         page_obj = paginator.get_page(page_number)
-
-#         paginated_users.append({
-#             'user': user,
-#             'page_obj': page_obj
-#         })
-
-#     return render(request, 'all_emails_by_user.html', {'paginated_users': paginated_users})
-
 
 from django.contrib.auth.models import User  # Make sure this is imported
-from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
 
 @login_required
 def all_emails_by_user(request):
@@ -333,7 +256,7 @@ def all_emails_by_user(request):
 
     for user in users:
         user_emails = EmailEntry.objects.filter(user=user)
-        paginator = Paginator(user_emails, 5)
+        paginator = Paginator(user_emails, 4)
         page_number = request.GET.get(f'page_{user.id}')
         page_obj = paginator.get_page(page_number)
 
