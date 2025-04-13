@@ -19,6 +19,67 @@ def dashboard(request):
     page_obj = paginator.get_page(page_number)
     return render(request, 'dashboard.html', {'page_obj': page_obj, 'search_query': search_query})
 
+
+from django.contrib import messages
+from .forms import EmailEntryForm
+import random
+
+success_messages = [
+    "Great work, {username}! Your data has been successfully saved. Your contribution to the team is highly appreciated.",
+    "Thank you, {username}. The school has been added successfully. Your collaboration is the cornerstone of our success.",
+    "Well done, {username}! You have successfully added the data. We commend your consistent efforts.",
+    "The data has been successfully saved. Thank you, {username}, for being part of our collective progress.",
+    "Outstanding job, {username}! Keep up the great work – the team depends on you.",
+    "Thank you for your contribution, {username}. You have successfully added a new school. Together, we are building a robust system.",
+    "Your submission was successful. Thank you, {username}, for your wholehearted commitment to this task.",
+    "Amazing work, {username}. The data has been saved successfully. We appreciate your hard work and dedication.",
+    "Excellent job, {username}. The school has been added to the system. We’re grateful for your contribution.",
+    "Your contribution is invaluable, {username}. The data has been saved, and we appreciate your commitment to excellence.",
+    "Thank you for your dedication, {username}. The data has been added successfully. The team values your efforts.",
+    "Great work, {username}! You’ve successfully submitted the data. We’re grateful for your efforts in making this a success.",
+    "Well done, {username}. The school has been successfully added to the system. Your hard work is truly appreciated.",
+    "Excellent contribution, {username}. Your data has been successfully recorded. We’re proud of your dedication.",
+    "Thank you for your effort, {username}. The data has been added successfully. Keep up the excellent work.",
+    "Great job, {username}. Your data has been added to the system. We are thankful for your contributions.",
+    "You’ve done an excellent job, {username}. Your data has been successfully added to the system. We appreciate your hard work.",
+    "Kudos, {username}. Your data has been successfully submitted. Thank you for your hard work and dedication.",
+    "Well done, {username}. The data has been saved successfully. Keep up the great work – the team is counting on you.",
+    "Fantastic job, {username}! You’ve successfully contributed. The team appreciates your hard work and effort.",
+    "Great job, {username}. The data has been successfully saved. Your contribution is valued by the entire team.",
+    "Thank you for your effort, {username}. The school has been successfully added. Your work makes a difference.",
+    "Awesome work, {username}! Your contribution has been successfully saved. The team truly appreciates your dedication.",
+    "Congratulations, {username}. You’ve added data successfully. We value your contribution to the project.",
+    "Nice work, {username}. Your data has been successfully saved. The team is thankful for your hard work.",
+    "Great work, {username}. The data has been successfully added. Your commitment to excellence is inspiring.",
+    "Thank you, {username}. The school has been added successfully. We’re proud of your continuous effort.",
+    "Amazing effort, {username}. The data has been successfully saved. Your work has made a significant impact.",
+    "You did a fantastic job, {username}. Your data has been saved. Keep up the excellent work!",
+    "Fantastic job, {username}. The data has been successfully added. The team is grateful for your dedication.",
+    "Well done, {username}. The data has been successfully saved. Your contribution is helping us move forward.",
+    "Great work, {username}. Your data has been successfully saved. Keep up the great work, and thank you for your effort.",
+    "Excellent job, {username}. The data has been saved. Your contribution is essential to our progress.",
+    "Congratulations, {username}. Your data has been successfully recorded. The team is grateful for your hard work.",
+    "Well done, {username}. The data has been added successfully. We’re excited about the progress we’re making together.",
+    "Fantastic work, {username}. The data has been successfully saved. The team is proud of what you’ve achieved.",
+    "Thank you, {username}. Your contribution has been recorded successfully. Keep up the amazing work.",
+    "Great work, {username}. You’ve successfully added the data. The team values your continued effort.",
+    "You did an excellent job, {username}. Your data has been saved successfully. We’re grateful for your contribution.",
+    "Awesome work, {username}. The data has been added successfully. Your efforts are helping build a better system.",
+    "Nice work, {username}. Your data has been successfully added. The team appreciates your effort and dedication.",
+    "Congratulations, {username}. You’ve successfully added the data. Your dedication is helping us grow.",
+    "Outstanding job, {username}. The data has been saved successfully. We’re thankful for your consistent contributions.",
+    "Well done, {username}. Your data has been successfully added. Keep pushing forward – the team is behind you.",
+    "Fantastic job, {username}. The data has been saved successfully. You’re making a significant difference with your work.",
+    "Excellent work, {username}. Your data has been successfully saved. We appreciate your consistent dedication.",
+    "Great job, {username}. The data has been successfully added. Thank you for your continued efforts.",
+    "Awesome effort, {username}. The data has been added successfully. Your hard work is appreciated.",
+    "Well done, {username}. The data has been successfully saved. We’re thankful for your contribution to the system.",
+    "Congratulations, {username}. Your data has been added successfully. Your efforts are driving the project forward.",
+    "Thank you for your contribution, {username}. The data has been successfully recorded. Keep up the great work."
+]
+
+
+
 @login_required
 def add_email(request):
     if request.method == 'POST':
@@ -27,10 +88,16 @@ def add_email(request):
             email_entry = form.save(commit=False)
             email_entry.user = request.user
             email_entry.save()
-            return redirect('dashboard')
+
+            # Chagua ujumbe mmoja randomly
+            msg = random.choice(success_messages).format(username=request.user.username)
+            messages.success(request, msg)
+
+            return redirect('all_emails')
     else:
         form = EmailEntryForm()
     return render(request, 'add_email.html', {'form': form})
+
 
 def register(request):
     if request.method == 'POST':
