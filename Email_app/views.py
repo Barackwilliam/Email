@@ -10,6 +10,15 @@ from django.contrib.auth.decorators import login_required
 from .models import EmailEntry
 from .forms import EmailEntryForm
 
+# @login_required
+# def dashboard(request):
+#     search_query = request.GET.get('search', '')
+#     emails = EmailEntry.objects.filter(email__icontains=search_query)
+#     paginator = Paginator(emails, 10)
+#     page_number = request.GET.get('page')
+#     page_obj = paginator.get_page(page_number)
+#     return render(request, 'dashboard.html', {'page_obj': page_obj, 'search_query': search_query})
+
 @login_required
 def dashboard(request):
     search_query = request.GET.get('search', '')
@@ -17,7 +26,14 @@ def dashboard(request):
     paginator = Paginator(emails, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'dashboard.html', {'page_obj': page_obj, 'search_query': search_query})
+    
+    total_emails = emails.count()  # Hii ndiyo jumla ya emails
+
+    return render(request, 'dashboard.html', {
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'total_emails': total_emails
+    })
 
 
 from django.contrib import messages
@@ -125,11 +141,16 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     return redirect('login')
-
+    
 @login_required
 def all_emails(request):
     user_emails = EmailEntry.objects.filter(user=request.user)
-    return render(request, 'all_emails.html', {'user_emails': user_emails})
+    total_user_emails = user_emails.count()  # Jumla ya emails alizoongeza huyu user
+
+    return render(request, 'all_emails.html', {
+        'user_emails': user_emails,
+        'total_user_emails': total_user_emails
+    })
 
 @login_required
 def send_selected_emails(request):
