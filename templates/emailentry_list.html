@@ -1,0 +1,103 @@
+
+
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1>Advanced Data sorting</h1>
+
+<marquee behavior="scroll" direction="left" style="color:rgb(253, 5, 5)">
+<h3>You can use even one option to filter based on your preference and data can be exported to CSV, EXEL or PDF scroll down to do so.. incase of any problem ask 0629712678</h3></marquee>
+
+
+<form method="get">
+    <div class="filters">
+        <input type="text" name="school_name" placeholder="School Name" value="{{ filters.school_name }}">
+        <input type="text" name="email" placeholder="Email" value="{{ filters.email }}">
+        <input type="text" name="phone" placeholder="Phone Number" value="{{ filters.phone }}">
+
+        <select name="region">
+            <option value="">All Regions</option>
+            {% for reg in regions %}
+                <option value="{{ reg }}" {% if filters.region == reg %}selected{% endif %}>{{ reg }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="district">
+            <option value="">All Districts</option>
+            {% for dist in districts %}
+                <option value="{{ dist }}" {% if filters.district == dist %}selected{% endif %}>{{ dist }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="has">
+            <option value="">All Entries</option>
+            <option value="email" {% if filters.has == 'email' %}selected{% endif %}>Has Email</option>
+            <option value="phone" {% if filters.has == 'phone' %}selected{% endif %}>Has Phone</option>
+        </select>
+
+        <select name="contact_type">
+            <option value="">All Contacts</option>
+            <option value="email_only" {% if filters.contact_type == 'email_only' %}selected{% endif %}>Email Only</option>
+            <option value="phone_only" {% if filters.contact_type == 'phone_only' %}selected{% endif %}>Phone Only</option>
+            <option value="both" {% if filters.contact_type == 'both' %}selected{% endif %}>Both Email and Phone</option>
+            <option value="one_only" {% if filters.contact_type == 'one_only' %}selected{% endif %}>Either Email or Phone</option>
+        </select>
+
+        <select name="order_by">
+            <option value="school_name" {% if order_by == 'school_name' %}selected{% endif %}>Sort by School Name</option>
+            <option value="region" {% if order_by == 'region' %}selected{% endif %}>Sort by Region</option>
+            <option value="district" {% if order_by == 'district' %}selected{% endif %}>Sort by District</option>
+        </select>
+
+        <button type="submit">Filter</button>
+    </div>
+</form>
+
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>School Name</th>
+                <th>Region</th>
+                <th>District</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            <tr>
+                <td>{{ entry.school_name }}</td>
+                <td>{{ entry.region }}</td>
+                <td>{{ entry.district }}</td>
+                <td>{{ entry.email }}</td>
+                <td>{{ entry.phone_number }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center;">No entries found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="export-links">
+    <a href="?{% for key, value in filters.items %}{% if value %}{{ key }}={{ value|urlencode }}&{% endif %}{% endfor %}export=csv">Export CSV</a>
+    <a href="?{% for key, value in filters.items %}{% if value %}{{ key }}={{ value|urlencode }}&{% endif %}{% endfor %}export=excel">Export Excel</a>
+    <a href="?{% for key, value in filters.items %}{% if value %}{{ key }}={{ value|urlencode }}&{% endif %}{% endfor %}export=pdf">Export PDF</a>
+</div>
+
+<div class="pagination">
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}&{% for key, value in filters.items %}{{ key }}={{ value|urlencode }}&{% endfor %}">Previous</a>
+    {% endif %}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&{% for key, value in filters.items %}{{ key }}={{ value|urlencode }}&{% endfor %}">Next</a>
+    {% endif %}
+</div>
+</div>
+
+{% endblock %}

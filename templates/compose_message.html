@@ -14,11 +14,17 @@
             <form method="POST" id="messageForm" action="{% url 'send_custom_message' %}">
                 {% csrf_token %}
 
-                <!-- Message Body -->
+               <!-- Subject Field -->
                 <div class="mb-4">
-                    <label for="message_body" class="form-label fw-semibold">Your Message</label>
-                    <textarea class="form-control" id="message_body" name="message_body" rows="6" placeholder="Type your message here..." required></textarea>
-                </div>
+                        <label for="subject" class="form-label fw-semibold">Subject</label>
+                          <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter email subject..." required>
+                   </div>
+
+                          <!-- Message Body -->
+              <div class="mb-4">
+                <label for="message_body" class="form-label fw-semibold">Your Message</label>
+                        <textarea class="form-control" id="message_body" name="message_body" rows="6" placeholder="Type your message here..." required></textarea>
+                  </div>
 
                 <!-- Send Options -->
                 <div class="mb-4">

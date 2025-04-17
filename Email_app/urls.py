@@ -13,6 +13,7 @@ urlpatterns = [
     path('compose/', views.send_custom_message, name='send_custom_message'),
     path('compose/', views.send_custom_message, name='compose_message'),
     path('all-emails-by-user/', views.all_emails_by_user, name='all_emails_by_user'),
+    path('entries/', views.emailentry_list, name='emailentry_list'),
 
 
 

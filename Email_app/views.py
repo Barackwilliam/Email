@@ -256,47 +256,14 @@ def send_to_all_emails(request):
 
 from django.contrib import messages  # Hakikisha imewekwa juu
 
-# @login_required
-# def send_custom_message(request):
-#     if request.method == 'POST':
-#         message_body = request.POST.get('message_body')
-#         send_option = request.POST.get('send_option')
-#         selected_ids = request.POST.get('selected_ids').split(',') if request.POST.get('selected_ids') else []
-
-#         if send_option == 'selected':
-#             emails = EmailEntry.objects.filter(id__in=selected_ids)
-#         else:
-#             emails = EmailEntry.objects.all()
-
-#         sent_count = 0  # counter ya emails zilizotumwa
-
-#         for email in emails:
-#             message = render_to_string('email_template.html', {
-#                 'email': email,
-#                 'message_body': message_body
-#             })
-#             plain_message = strip_tags(message)
-#             send_mail('Custom Message', plain_message, settings.DEFAULT_FROM_EMAIL, [email.email], html_message=message)
-#             sent_count += 1
-
-#         messages.success(request, f'Message sent to {sent_count} email{"s" if sent_count != 1 else ""}.')
-#         return redirect('dashboard')
-
-#     else:
-#         user_emails = EmailEntry.objects.filter(user=request.user)
-#         return render(request, 'compose_message.html', {'user_emails': user_emails})
-
-
-
-
 
 from django.core.paginator import Paginator
 from django.db.models import Q
 from datetime import datetime
-
 @login_required
 def send_custom_message(request):
     if request.method == 'POST':
+        subject = request.POST.get('subject')
         message_body = request.POST.get('message_body')
         send_option = request.POST.get('send_option')
         selected_ids = request.POST.get('selected_ids').split(',') if request.POST.get('selected_ids') else []
@@ -310,14 +277,17 @@ def send_custom_message(request):
         for email in emails:
             message = render_to_string('email_template.html', {
                 'email': email,
-                'message_body': message_body
+                'message_body': message_body,
+                'subject': subject,
+                'current_year': datetime.now().year
             })
             plain_message = strip_tags(message)
-            send_mail('Custom Message', plain_message, settings.DEFAULT_FROM_EMAIL, [email.email], html_message=message)
+            send_mail(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [email.email], html_message=message)
             sent_count += 1
 
         messages.success(request, f'Message sent to {sent_count} email{"s" if sent_count != 1 else ""}.')
         return redirect('dashboard')
+
 
     else:
         search_query = request.GET.get('search', '')
@@ -342,6 +312,10 @@ def send_custom_message(request):
         })
 
 
+    
+    
+    
+
 from django.contrib.auth.models import User  # Make sure this is imported
 
 @login_required
@@ -362,3 +336,129 @@ def all_emails_by_user(request):
         })
 
     return render(request, 'all_emails_by_user.html', {'paginated_users': paginated_users})
+
+
+    
+from django.core.paginator import Paginator
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+from openpyxl import Workbook
+from django.db.models import Q
+import csv
+import io
+
+from .models import EmailEntry
+
+
+def export_to_excel(entries):
+    wb = Workbook()
+    ws = wb.active
+    ws.append(['School Name', 'Region', 'District', 'Email', 'Phone Number'])
+    for entry in entries:
+        ws.append([entry.school_name, entry.region, entry.district, entry.email, entry.phone_number])
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename="email_entries.xlsx"'
+    wb.save(response)
+    return response
+
+
+def render_to_pdf(template_src, context_dict={}):
+    html_string = render_to_string(template_src, context_dict)
+    result = io.BytesIO()
+    pdf = pisa.pisaDocument(io.BytesIO(html_string.encode("UTF-8")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+
+
+def emailentry_list(request):
+    email        = request.GET.get('email', '')
+    phone        = request.GET.get('phone', '')
+    region       = request.GET.get('region', '')
+    district     = request.GET.get('district', '')
+    school_name  = request.GET.get('school_name', '')
+    order_by_col = request.GET.get('order_by', 'school_name')
+    order_dir    = request.GET.get('order_dir', 'asc')
+    contact_type = request.GET.get('contact_type', '')
+    export       = request.GET.get('export', '')
+
+    # Build base queryset
+    entries = EmailEntry.objects.all()
+
+    # Standard filters
+    if email:
+        entries = entries.filter(email__icontains=email)
+    if phone:
+        entries = entries.filter(phone_number__icontains=phone)
+    if region:
+        entries = entries.filter(region=region)
+    if district:
+        entries = entries.filter(district=district)
+    if school_name:
+        entries = entries.filter(school_name__icontains=school_name)
+
+    # Contact-type filters
+    if contact_type == 'email_only':
+        entries = entries.filter(email__isnull=False).exclude(email='') \
+                         .filter(Q(phone_number__isnull=True) | Q(phone_number=''))
+    elif contact_type == 'phone_only':
+        entries = entries.filter(phone_number__isnull=False).exclude(phone_number='') \
+                         .filter(Q(email__isnull=True) | Q(email=''))
+    elif contact_type == 'both':
+        entries = entries.filter(email__isnull=False).exclude(email='') \
+                         .filter(phone_number__isnull=False).exclude(phone_number='')
+    elif contact_type == 'one_only':
+        entries = entries.filter(
+            (Q(email__isnull=False) & ~Q(email='') & (Q(phone_number__isnull=True) | Q(phone_number=''))) |
+            (Q(phone_number__isnull=False) & ~Q(phone_number='') & (Q(email__isnull=True) | Q(email='')))
+        )
+
+    # Apply sorting
+    prefix = '-' if order_dir == 'desc' else ''
+    entries = entries.order_by(f'{prefix}{order_by_col}')
+
+    # Export handlers
+    if export == 'csv':
+        resp = HttpResponse(content_type='text/csv')
+        resp['Content-Disposition'] = 'attachment; filename="email_entries.csv"'
+        writer = csv.writer(resp)
+        writer.writerow(['School Name', 'Region', 'District', 'Email', 'Phone Number'])
+        for e in entries:
+            writer.writerow([e.school_name, e.region, e.district, e.email, e.phone_number])
+        return resp
+
+    if export == 'pdf':
+        return render_to_pdf('pdf_template.html', {'entries': entries})
+
+    if export == 'excel':
+        return export_to_excel(entries)
+
+    # Pagination
+    paginator = Paginator(entries, 10)
+    page_obj = paginator.get_page(request.GET.get('page'))
+
+    # Dropdown options
+    regions   = EmailEntry.objects.values_list('region', flat=True).distinct()
+    districts = EmailEntry.objects.values_list('district', flat=True).distinct()
+
+    # Pass everything to template
+    context = {
+        'entries': page_obj,
+        'page_obj': page_obj,
+        'filters': {
+            'email': email,
+            'phone': phone,
+            'region': region,
+            'district': district,
+            'school_name': school_name,
+            'contact_type': contact_type,
+        },
+        'order_by': order_by_col,
+        'order_dir': order_dir,
+        'regions': regions,
+        'districts': districts,
+    }
+    return render(request, 'emailentry_list.html', context)
