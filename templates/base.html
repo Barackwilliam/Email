@@ -290,9 +290,10 @@
         <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
         <li><a href="{% url 'add_email' %}">Add Email</a></li>
         <li><a href="{% url 'all_emails' %}">My Emails</a></li>
+        <li><a href="{% url 'compose_message' %}">Compose</a></li>
+
         <li><a href="{% url 'all_emails_by_user' %}">Emails by Groups</a></li>
 
-        <li><a href="{% url 'compose_message' %}">Compose</a></li>
         <li><a href="{% url 'emailentry_list' %}">Advance Sorting </a></li>
 
         {% if user.is_staff %}      
@@ -317,12 +318,14 @@
           <li class="nav-item"><a class="nav-link text-white" href="{% url 'dashboard' %}">Dashboard</a></li>
           <li class="nav-item"><a class="nav-link text-white" href="{% url 'add_email' %}">Add Email</a></li>
           <li class="nav-item"><a class="nav-link text-white" href="{% url 'all_emails' %}">My Emails</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="{% url 'all_emails_by_user' %}">Emails by Groups</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="{% url 'compose_message' %}">Compose</a></li>
+
           {% if user.is_staff %} 
           <li class="nav-item"><a class="nav-link text-white" href="{% url 'admin:index' %}">Admin</a></li>
         {% endif %}
 
-          <li class="nav-item"><a class="nav-link text-white" href="{% url 'compose_message' %}">Compose</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="{% url 'all_emails_by_user' %}">Emails by Groups</a></li>
+         
           <li class="nav-item"><a class="nav-link text-white" href="{% url 'emailentry_list' %}">Advance Sorting</a></li>
 
           <li class="nav-item"><a class="nav-link text-danger" href="{% url 'logout' %}">Logout</a></li>
