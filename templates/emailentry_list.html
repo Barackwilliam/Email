@@ -7,7 +7,7 @@
 <h1>Advanced Data sorting</h1>
 
 <marquee behavior="scroll" direction="left" style="color:rgb(253, 5, 5)">
-<h3>You can use even one option to filter based on your preference and data can be exported to CSV, EXEL or PDF scroll down to do so.. incase of any problem ask 0629712678</h3></marquee>
+<h3>You can use even one or more options to filter based on your preference and data can be exported to CSV, EXEL or PDF scroll down to do so.. incase of any problem ask 0629712678</h3></marquee>
 
 
 <form method="get">
@@ -30,11 +30,6 @@
             {% endfor %}
         </select>
 
-        <select name="has">
-            <option value="">All Entries</option>
-            <option value="email" {% if filters.has == 'email' %}selected{% endif %}>Has Email</option>
-            <option value="phone" {% if filters.has == 'phone' %}selected{% endif %}>Has Phone</option>
-        </select>
 
         <select name="contact_type">
             <option value="">All Contacts</option>
