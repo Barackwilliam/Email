@@ -15,6 +15,9 @@ urlpatterns = [
     path('all-emails-by-user/', views.all_emails_by_user, name='all_emails_by_user'),
     path('entries/', views.emailentry_list, name='emailentry_list'),
 
+    path('sms/add/', views.add_sms_message, name='add_sms_message'),
+    path('sms/list/', views.sms_message_list, name='sms_message_list'),
+
 
 
 ]

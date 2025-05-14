@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- <h2>Messages</h2> -->
+ 
+<marquee behavior="scroll" direction="left" style="color:rgb(253, 5, 5)">
+    <h3>All or Filtered Messages can be exported to CSV, EXEL or PDF with only single click.. But Username and Date added have been Excluded for Technical reasons.</h3></marquee>
+    
+    
+
+
+{% if search_query %}
+<h4 class="mb-0">
+    📧 System found <strong> <span class="badge bg-danger ms-2 text-white">{{ filtered_count }}</span></strong> out of <strong> <span class="badge bg-danger ms-2 text-white">{{ total_messages }}</span></strong> Messages
+</h4>
+{% else %}
+<h4 class="mb-0">
+    📧 List of All Registered Messages
+    <span class="badge bg-danger ms-2 text-white"> {{ total_messages }} Up to Now</span>
+</h4>
+{% endif %}
+    <!-- Alerts -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+<form method="get" class="mb-3">
+  <input type="text" name="search" placeholder="Search messages" value="{{ search_query }}" class="form-control mb-2" />
+  <select name="category" class="form-control mb-2">
+    <option value="">All Categories</option>
+    <option value="spam" {% if category_filter == 'spam' %}selected{% endif %}>Spam</option>
+    <option value="ham" {% if category_filter == 'ham' %}selected{% endif %}>Ham</option>
+  </select>
+  <button type="submit" class="btn btn-primary">Filter</button>
+  <a href="?export=csv" class="btn btn-success">Export CSV</a>
+  <a href="?export=excel" class="btn btn-success">Export Excel</a>
+  <a href="?export=pdf" class="btn btn-success">Export PDF</a>
+</form>
+
+<div style="overflow-x:auto;">
+  <table class="table table-bordered table-responsive">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Category</th>
+        <th style="min-width: 300px; word-wrap: break-word;">Message</th>
+        <th>Date Added</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for msg in page_obj %}
+      <tr>
+        <td>{{ msg.user.username }}</td>
+        <td>{{ msg.get_category_display }}</td>
+        <td style="white-space: normal; word-break: break-word;">{{ msg.message }}</td>
+        <td>{{ msg.date_added }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">No messages found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<nav>
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&category={{ category_filter }}">Previous</a></li>
+    {% endif %}
+    <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+    {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&category={{ category_filter }}">Next</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endblock %}
