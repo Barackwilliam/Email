@@ -449,7 +449,7 @@ def add_sms_message(request):
             msg = random.choice(success_messages).format(username=request.user.username)
             messages.success(request, msg)
 
-            return redirect('sms_message_list')
+            return redirect('add_sms_message')
     else:
         form = SMSMessageForm()
     return render(request, 'add_sms_message.html', {'form': form})
