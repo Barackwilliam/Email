@@ -139,11 +139,11 @@ def add_email(request):
             msg = random.choice(success_messages).format(username=request.user.username)
             messages.success(request, msg)
 
-            return redirect('all_emails')
+            form = EmailEntryForm()  # Weka form mpya tupu
     else:
         form = EmailEntryForm()
-    return render(request, 'add_email.html', {'form': form})
 
+    return render(request, 'add_email.html', {'form': form})
 
 def register(request):
     if request.method == 'POST':
