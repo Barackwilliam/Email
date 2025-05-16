@@ -139,11 +139,11 @@ def add_email(request):
             msg = random.choice(success_messages).format(username=request.user.username)
             messages.success(request, msg)
 
-            return redirect('all_emails')
+            form = EmailEntryForm()  # Weka form mpya tupu
     else:
         form = EmailEntryForm()
-    return render(request, 'add_email.html', {'form': form})
 
+    return render(request, 'add_email.html', {'form': form})
 
 def register(request):
     if request.method == 'POST':
@@ -472,9 +472,13 @@ def add_sms_message(request):
             msg = random.choice(success_messages).format(username=request.user.username)
             messages.success(request, msg)
 
+<<<<<<< HEAD
             # Badala ya redirect, render template moja kwa moja
             form = SMSMessageForm()  # reset form baada ya save
             return render(request, 'add_sms_message.html', {'form': form})
+=======
+            return redirect('add_sms_message')
+>>>>>>> 4f96eeeaeec5b9d5caca114235931d85e6ae0bd1
     else:
         form = SMSMessageForm()
     return render(request, 'add_sms_message.html', {'form': form})
