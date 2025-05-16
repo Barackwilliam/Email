@@ -51,21 +51,21 @@
     <tbody>
       {% for msg in page_obj %}
       <tr>
-        <td style="background-color:#09045227; color: aliceblue;">{{ msg.user.username }}</td>
+        <td>{{ msg.user.username }}</td>
         <!-- <td style="background-color:#09045227;">
           <span class="{% if msg.category == 'spam' %}spam-bounce{% else %}text-warning{% endif %}">
             {{ msg.get_category_display }}
           </span>
         </td> -->
-        <td style="background-color:#09045227;">
-          <span class="{% if msg.category == 'spam' %}spam-zoom{% else %}text-warning{% endif %}">
+        <td>
+          <span class="{% if msg.category == 'spam' %}spam-zoom{% else %}text-info{% endif %}">
             {{ msg.get_category_display }}
           </span>
         </td>
-        <td style="background-color:#09045227; color: {% if msg.category == 'ham' %}yellow{% else %}black{% endif %}; white-space: normal; word-break: break-word;">
+        <td style="color: {% if msg.category == 'ham' %}black{% else %}black{% endif %}; white-space: normal; word-break: break-word;">
           {{ msg.message }}
         </td>   
-        <td style="background-color:#09045227; color: aliceblue;">{{ msg.date_added }}</td>
+        <td>{{ msg.date_added }}</td>
       </tr>
       {% empty %}
       <tr><td colspan="4">No messages found.</td></tr>
