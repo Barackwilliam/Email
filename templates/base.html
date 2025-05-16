@@ -9,6 +9,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
   <style>
+     
+  @keyframes zoomInOut {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+  }
+  .spam-zoom {
+    color: red;
+    display: inline-block;
+    animation: zoomInOut 1.5s infinite;
+  }
     h1 {
       text-align: center;
       font-size: 1.8em;

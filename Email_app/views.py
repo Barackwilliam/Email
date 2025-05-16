@@ -434,6 +434,29 @@ def emailentry_list(request):
 
 
 
+# @login_required
+# def add_sms_message(request):
+#     if request.method == 'POST':
+#         form = SMSMessageForm(request.POST)
+#         if form.is_valid():
+#             sms = form.save(commit=False)
+#             sms.user = request.user
+#             sms.save()
+
+#             # Chagua random success message na badilisha {username}
+#             # message_text = random.choice(success_messages).format(username=request.user.username)
+#             # messages.success(request, message_text)
+#             msg = random.choice(success_messages).format(username=request.user.username)
+#             messages.success(request, msg)
+
+#             return redirect('sms_message_list')
+#     else:
+#         form = SMSMessageForm()
+#     return render(request, 'add_sms_message.html', {'form': form})
+
+
+
+
 @login_required
 def add_sms_message(request):
     if request.method == 'POST':
@@ -443,13 +466,15 @@ def add_sms_message(request):
             sms.user = request.user
             sms.save()
 
-            # Chagua random success message na badilisha {username}
+             # Chagua random success message na badilisha {username}
             # message_text = random.choice(success_messages).format(username=request.user.username)
             # messages.success(request, message_text)
             msg = random.choice(success_messages).format(username=request.user.username)
             messages.success(request, msg)
 
-            return redirect('sms_message_list')
+            # Badala ya redirect, render template moja kwa moja
+            form = SMSMessageForm()  # reset form baada ya save
+            return render(request, 'add_sms_message.html', {'form': form})
     else:
         form = SMSMessageForm()
     return render(request, 'add_sms_message.html', {'form': form})
