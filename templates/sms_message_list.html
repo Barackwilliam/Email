@@ -15,8 +15,8 @@
 </h4>
 {% else %}
 <h4 class="mb-0">
-    📧 List of All Registered Messages
-    <span class="badge bg-danger ms-2 text-white"> {{ total_messages }} Up to Now</span>
+    📧 Total Messages:
+    <span class="badge bg-info ms-2 text-black"> {{ total_messages }} Now </span><span class="badge bg-danger ms-2 text-white">Spam: {{ spam_count }}</span> <span class="badge bg-success ms-2 text-white">Ham: {{ ham_count }}</span>
 </h4>
 {% endif %}
     <!-- Alerts -->

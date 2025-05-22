@@ -458,6 +458,8 @@ def add_sms_message(request):
         form = SMSMessageForm()
     return render(request, 'add_sms_message.html', {'form': form})
 
+
+
 @login_required
 def sms_message_list(request):
     search_query = request.GET.get('search', '')
@@ -466,6 +468,8 @@ def sms_message_list(request):
 
     # Count zote kabla ya filter
     total_messages = messages_qs.count()
+    spam_count = SMSMessage.objects.filter(category='spam').count()
+    ham_count = SMSMessage.objects.filter(category='ham').count()
 
     # Apply filters
     if search_query:
@@ -475,6 +479,7 @@ def sms_message_list(request):
 
     # Count baada ya filter
     filtered_count = messages_qs.count()
+
     # Pagination
     paginator = Paginator(messages_qs.order_by('-date_added'), 10)
     page_number = request.GET.get('page')
@@ -495,7 +500,10 @@ def sms_message_list(request):
         'category_filter': category_filter,
         'total_messages': total_messages,
         'filtered_count': filtered_count,
+        'spam_count': spam_count,
+        'ham_count': ham_count,
     })
+
 
 def export_sms_csv(queryset):
     response = HttpResponse(content_type='text/csv')
